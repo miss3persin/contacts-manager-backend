@@ -7,6 +7,7 @@ const Contact = require("../models/contactModel");
 //@access private
 const getContacts = asyncHandler(async (req, res) => {
     const contacts = await Contact.find({user_id: req.user.id});
+
   res.status(200).json(contacts);
   // res.json({message: "get all contacts"});
   // res.send("get all contacts");
@@ -22,6 +23,12 @@ const getContact = asyncHandler(async (req, res) => {
         res.status(404);
         throw new Error("Contact not found");
     }
+
+    if(contact.user_id.toString() !== req.user.id){
+      res.status(403);
+      throw new Error("User does not have permission to view other contacts");
+    };
+
   res.status(200).json(contact);
 });
 
